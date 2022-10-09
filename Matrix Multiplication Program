@@ -1,0 +1,19 @@
+# Python program to multiply two matrices using for loop
+
+m1 = [[1, 7, 13],
+      [4, 15, 6],
+      [17, 0, 9]]
+m2 = [[5, 3, 1, 2],
+      [8, 7, 3, 0],
+      [4, 0, 0, 1]]
+res = [[0, 0, 0, 0],
+       [0, 0, 0, 0],
+       [0, 0, 0, 0]]
+
+# multiply matrix
+for i in range(len(m1)):
+   for j in range(len(m2[0])):
+      for k in range(len(m2)):
+         res[i][j] += m1[i][k] * m2[k][j]
+for r in res:
+   print(r)
