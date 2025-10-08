@@ -1,0 +1,40 @@
+beads level 1 program clock  --  a simple analog clock, drawn with lines
+
+var g : a_date	--  the current calendar date, this record defined in std library
+
+-----------------
+calc main_init
+-----------------
+	//  set up a never ending callback to 'do_tick' every second, starting immediately
+	loom_timer(do_tick, delay:0, interval:1, reps:INFINITY)
+
+-----------------
+calc do_tick -- is called once a second
+-----------------
+	//  set our state variable g which will cause redraw to happen automatically
+	merge seconds_to_date() ===> g  --  take our local clock in epoch seconds and convert to the date/time in our local city
+
+----------------
+draw main_draw
+----------------
+	//  fill the screen with a background color
+	draw_rect(b.box, color:BEIGE)
+
+	//  calculate the size of the clock box, by taking 80% of the smaller of the total width and height
+	var diameter ⇐ 0.8*min(b.box.width, b.box.height)
+
+	//  calculate a square centered on the screen
+	var area : a_rect <=== solve_rect(basis:b.box, pin:5, width:diameter, height:diameter, round:Y)
+	
+	//  indent from the total screen size, set coordinate origin at the middle of the box
+	layer area:area, pin:5
+		draw_circle( x:0, y:0, fill:GREEN, diam:diameter, color:DARK_GREEN, thick:4 pt, pos:0)
+
+		//  sweep hour hand
+		draw_line( x1:0, y1:0, color:BROWN,  angle:(g.date_hour + g.date_minute/60)*30 - 90 deg, len:diameter*0.30, thick:8 pt)
+
+		//  sweep minute hand
+		draw_line( x1:0, y1:0, color:ORANGE, angle:(g.date_minute + g.date_second/60)*6 - 90 deg, len:diameter*0.40, thick:6 pt)
+
+		//  second hand (will jump because we only update once per second)
+		draw_line( x1:0, y1:0, color:BLUE,   angle:g.date_second*6 - 90 deg, len:diameter*0.45, thick:4 pt)
